@@ -6,11 +6,11 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, (process as any).cwd(), '');
   
   return {
-    // Set base to the exact repository name for GitHub Pages
+    // Set base to the exact repository name for GitHub Pages deployment
     base: '/Artifact-Oracale/',
     plugins: [react()],
     define: {
-      // Safely stringify the API key to prevent build-time errors
+      // Ensure the API key is injected as a string during the build process
       'process.env.API_KEY': JSON.stringify(env.API_KEY || ''),
     },
     server: {
@@ -19,7 +19,9 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'dist',
-      sourcemap: true
+      sourcemap: true,
+      // Ensure the output is clean for GitHub Pages
+      emptyOutDir: true
     }
   };
 });

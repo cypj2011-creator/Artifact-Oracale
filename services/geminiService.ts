@@ -1,26 +1,28 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { ArtifactAnalysis } from "../types";
 
 export const analyzeArtifact = async (base64Image: string): Promise<ArtifactAnalysis> => {
   // Always initialize a new GoogleGenAI instance right before making an API call
-  // to ensure it uses the most up-to-date configuration
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const response = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview', // High-reasoning model for historical identification
+    model: 'gemini-3-pro-preview', 
     contents: {
       parts: [
         {
           inlineData: {
             mimeType: 'image/jpeg',
-            data: base64Image.split(',')[1] || base64Image,
+            data: base64Image.includes('base64,') ? base64Image.split('base64,')[1] : base64Image,
           },
         },
         {
-          text: `Identify the artifact in this image. Provide a detailed historical and archeological analysis. 
-          Be specific about the culture, location of origin, and time period. 
-          If the object is a fragment, speculate on the original complete form based on known archeological patterns.`,
+          text: `You are a world-class archeologist. Identify the artifact in this image. 
+          Analyze its material, craftsmanship, and style to determine:
+          1. Its specific name or type.
+          2. Where it is from (geographic origin and ancient region).
+          3. When it is from (time period, dynasty, and estimated century).
+          4. The culture or civilization that produced it.
+          5. Its historical significance and original purpose.`,
         },
       ],
     },
@@ -39,7 +41,7 @@ export const analyzeArtifact = async (base64Image: string): Promise<ArtifactAnal
           materials: { 
             type: Type.ARRAY, 
             items: { type: Type.STRING },
-            description: "List of materials used (e.g., Terracotta, Lapis Lazuli, Bronze)"
+            description: "List of materials used"
           },
           confidence: { type: Type.NUMBER, description: "Confidence score from 0.0 to 1.0" }
         },
@@ -48,17 +50,15 @@ export const analyzeArtifact = async (base64Image: string): Promise<ArtifactAnal
     },
   });
 
-  // Extract the text property directly (it's a getter, not a method)
-  const jsonStr = response.text;
-  if (!jsonStr) {
-    throw new Error("The analysis returned no data. The artifact remains shrouded in mystery.");
+  const text = response.text;
+  if (!text) {
+    throw new Error("The historical archives are silent. Try a clearer photo of the artifact.");
   }
 
   try {
-    const result = JSON.parse(jsonStr);
-    return result as ArtifactAnalysis;
+    return JSON.parse(text) as ArtifactAnalysis;
   } catch (err) {
-    console.error("Failed to parse analysis result:", jsonStr);
-    throw new Error("Could not interpret the historical archives. Please try another angle.");
+    console.error("JSON Parse Error:", text);
+    throw new Error("Analysis failed to format. The artifact remains a mystery for now.");
   }
 };
