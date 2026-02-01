@@ -6,11 +6,11 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, (process as any).cwd(), '');
   
   return {
-    // Set base to the repository name for correct asset loading on GitHub Pages
+    // Set base to the exact repository name for GitHub Pages
     base: '/Artifact-Oracale/',
     plugins: [react()],
     define: {
-      // Ensure the API key is always a string
+      // Safely stringify the API key to prevent build-time errors
       'process.env.API_KEY': JSON.stringify(env.API_KEY || ''),
     },
     server: {
