@@ -44,7 +44,7 @@ const App: React.FC = () => {
       setResult(analysis);
       setState(AppState.RESULT);
     } catch (err: any) {
-      console.error(err);
+      console.error("Archeology Analysis Failed:", err);
       setError(err.message || 'The artifact remains a mystery. Please try a clearer image.');
       setState(AppState.ERROR);
     }
@@ -70,7 +70,7 @@ const App: React.FC = () => {
 
         <div className="max-w-7xl mx-auto relative z-10">
           {state === AppState.IDLE && (
-            <div className="text-center py-12 md:py-32 animate-in fade-in duration-1000">
+            <div className="text-center py-12 md:py-32">
               <div className="inline-block px-4 py-1.5 mb-6 rounded-full border border-yellow-500/20 bg-yellow-500/5 text-yellow-500 text-xs font-bold tracking-[0.2em] uppercase">
                 AI-Powered Archeology
               </div>
@@ -88,7 +88,7 @@ const App: React.FC = () => {
           )}
 
           {state === AppState.LOADING && (
-            <div className="flex flex-col items-center justify-center py-32 space-y-8 animate-in fade-in duration-500">
+            <div className="flex flex-col items-center justify-center py-32 space-y-8">
               <div className="relative">
                 <div className="w-32 h-32 border-2 border-yellow-500/10 border-t-yellow-500 rounded-full animate-spin"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -109,7 +109,7 @@ const App: React.FC = () => {
           )}
 
           {state === AppState.ERROR && (
-            <div className="max-w-xl mx-auto glass-panel p-10 rounded-3xl border-red-500/30 text-center shadow-2xl animate-in zoom-in-95 duration-500">
+            <div className="max-w-xl mx-auto glass-panel p-10 rounded-3xl border-red-500/30 text-center shadow-2xl">
               <div className="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-8">
                 <i className="fas fa-ghost text-3xl"></i>
               </div>
