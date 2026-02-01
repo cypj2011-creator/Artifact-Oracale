@@ -1,20 +1,20 @@
+
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import process from 'process';
 
 export default defineConfig(({ mode }) => {
-  // Load environment variables from the project root.
-  // Explicitly importing 'process' resolves TypeScript errors where the global 'process' type might be incorrectly inferred as a browser-only shim.
-  const env = loadEnv(mode, process.cwd(), '');
+  // Load env file based on `mode` in the current working directory.
+  // Cast process to any to solve "Property 'cwd' does not exist on type 'Process'" error in certain environments.
+  const env = loadEnv(mode, (process as any).cwd(), '');
   
   return {
-    // Set base to the exact repository name for GitHub Pages deployment.
-    // GitHub Pages URL: https://cypj2011-creator.github.io/Artifact-Oracale/
+    // Exact repository name for GitHub Pages
     base: '/Artifact-Oracale/',
     plugins: [react()],
     define: {
-      // Safely inject the API key and polyfill process.env for browser usage.
+      // Direct string replacement is the most reliable way to handle env vars in Vite
       'process.env.API_KEY': JSON.stringify(env.API_KEY || ''),
+      // Polyfill process.env for third-party libraries that might expect it
       'process.env': {
          NODE_ENV: JSON.stringify(mode),
          API_KEY: JSON.stringify(env.API_KEY || '')
@@ -22,7 +22,6 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'dist',
-      assetsDir: 'assets',
       sourcemap: false,
       minify: 'esbuild',
       emptyOutDir: true,
