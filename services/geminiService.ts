@@ -7,12 +7,13 @@ import { ArtifactAnalysis } from "../types";
  * Follows Google GenAI SDK guidelines for initialization and content generation.
  */
 export const analyzeArtifact = async (base64Image: string): Promise<ArtifactAnalysis> => {
-  // Always use process.env.API_KEY directly when initializing the client as per guidelines.
-  // Assume the variable is pre-configured and valid.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  // Always use process.env.API_KEY directly when initializing the client.
+  // Named parameter must be used.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   try {
     const response = await ai.models.generateContent({
+      // Use gemini-3-pro-preview for complex reasoning tasks like archeological identification.
       model: 'gemini-3-pro-preview', 
       contents: {
         parts: [
@@ -64,6 +65,7 @@ export const analyzeArtifact = async (base64Image: string): Promise<ArtifactAnal
       throw new Error("The historical archives are silent. Try a clearer photo of the artifact.");
     }
 
+    // Parse the JSON output from the model's text response
     return JSON.parse(text) as ArtifactAnalysis;
   } catch (err: any) {
     console.error("Gemini Analysis Error:", err);
