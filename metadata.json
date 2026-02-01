@@ -1,0 +1,7 @@
+{
+  "name": "Artifact Oracle",
+  "description": "An AI-powered archeological companion that identifies artifacts, determines their historical period, and pinpoints their geographic origin through image analysis.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
